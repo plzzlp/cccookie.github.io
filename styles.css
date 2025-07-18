@@ -1,0 +1,144 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+/* Header styles */
+header {
+    background: #35424a;
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.logo {
+    height: 80px;
+    margin-bottom: 1rem;
+}
+
+/* Navigation styles */
+nav {
+    background: #e8491d;
+    padding: 0.5rem 0;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+}
+
+nav ul li {
+    margin: 0 1rem;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Main content styles */
+main {
+    padding: 2rem;
+}
+
+.hero {
+    text-align: center;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background: url('photos/background.jpg') no-repeat center center/cover;
+    color: white;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+#cta-button {
+    padding: 0.8rem 1.5rem;
+    background: #e8491d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#cta-button:hover {
+    background: #333;
+}
+
+.media-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.photo-gallery, .video-container {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.gallery img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    transition: transform 0.3s;
+}
+
+.gallery img:hover {
+    transform: scale(1.05);
+}
+
+video {
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+
+/* Footer styles */
+footer {
+    background: #35424a;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
