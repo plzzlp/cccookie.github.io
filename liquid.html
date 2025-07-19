@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>မင်္ဂလာပါဂေါင်ကြီးတို့</title>
+    <style>
+        :root {
+            --primary: rgba(231, 76, 60, 0.8);
+            --primary-solid: #e74c3c;
+            --secondary: rgba(25, 118, 210, 0.8);
+            --glass: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-highlight: rgba(255, 255, 255, 0.1);
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            backdrop-filter: blur(20px);
+        }
+        
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to right, #fff, #f8f8f8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .breadcrumb {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .filter-btn {
+            background: var(--glass);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: 1px solid var(--glass-border);
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 25px;
+        }
+        
+        .thumbnail {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .thumbnail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            z-index: -1;
+            border-radius: 16px;
+        }
+        
+        .thumbnail:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .thumbnail-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background: linear-gradient(45deg, #434343 0%, #000000 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .thumbnail-img::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            animation: shimmer 3s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+        
+        .thumbnail-info {
+            padding: 12px;
+        }
+        
+        .thumbnail-title {
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .thumbnail-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Video Detail View */
+        .video-detail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-detail.active {
+            opacity: 1;
+        }
+        
+        .video-container {
+            padding: 56.72% 0 0 0;
+            position: relative;
+            background: #000;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .video-info {
+            padding: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .video-title {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            background: linear-gradient(to right, var(--primary-solid), #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .video-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .video-meta div {
+            display: flex;
+            align-items: center;
+            background: var(--glass);
+            backdrop-filter: blur(5px);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .video-meta i {
+            margin-right: 5px;
+            color: var(--text-secondary);
+        }
+        
+        .video-description {
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: var(--text-secondary);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .action-btn {
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: none;
+            background: var(--glass);
+            backdrop-filter: blur(5px);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .action-btn i {
+            margin-right: 8px;
+        }
+        
+        .telegram-btn {
+            background: linear-gradient(135deg, var(--secondary), #0088cc);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            border: none;
+        }
+        
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+        }
+        
+        .telegram-btn img {
+            height: 20px;
+            margin-right: 10px;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: 1px solid var(--glass-border);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 101;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .get-it-on {
+            margin-top: 30px;
+        }
+        
+        .get-it-on p {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+        
+        /* Liquid highlight effects */
+        .liquid-highlight {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .video-info {
+                padding: 20px 15px;
+            }
+            
+            .video-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="liquid-highlight" id="liquid1"></div>
+    <div class="liquid-highlight" id="liquid2"></div>
+    
+    <header>
+        <div class="logo">yo.yo.</div>
+        <div class="breadcrumb">Home → Movie Catalog</div>
+        <button class="filter-btn">☑ Filter</button>
+    </header>
+    
+    <main class="gallery" id="gallery">
+        <!-- Thumbnails will be added here by JavaScript -->
+    </main>
+    
+    <div class="video-detail" id="videoDetail">
+        <button class="back-btn" id="backBtn">←</button>
+        <div class="video-container" id="videoPlayer"></div>
+        <div class="video-info">
+            <h1 class="video-title" id="detailTitle">Video Title</h1>
+            <div class="video-meta">
+                <div><i>Cast:</i> <span id="detailCast">Cast members</span></div>
+                <div><i>Category:</i> <span id="detailCategory">Category</span></div>
+                <div><i>Year:</i> <span id="detailYear">2025</span></div>
+                <div><i>Time:</i> <span id="detailTime">10 min</span></div>
+                <div><i>Country:</i> <span id="detailCountry">Country</span></div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn"><i>Share</i> Share</button>
+                <button class="action-btn"><i>Copy</i> Copy</button>
+            </div>
+            <div class="video-description">
+                <p>This is a sample video description. When you implement this, you can add real descriptions for each video.</p>
+            </div>
+            <div class="get-it-on">
+                <p>JOIN US ON</p>
+                <a href="https://t.me/marcustbyyakuzarsensei" class="telegram-btn" target="_blank">
+                    <img src="https://telegram.org/img/t_logo.png" alt="Telegram">
+                    Telegram
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+        // Sample video data (replace with your actual videos)
+        const videos = [
+            {
+                id: "310603",
+                title: "Sample Video 1",
+                thumbnail: "https://via.placeholder.com/300x200/434343/ffffff?text=Sample+1",
+                vimeoEmbed: `<iframe src="https://player.vimeo.com/video/1102606525?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="5_6280780626857563260"></iframe>`,
+                cast: "MTZ",
+                category: "Translation",
+                year: "2025",
+                time: "26s",
+                country: "idk",
+                telegramLink: "https://t.me/marcustbyyakuzarsensei",
+                description: "သွားပြောလို့ပါးချခံရရင်တာဝန်မယူဘူး
+ဒီနေ့မအားလို့ဒီလောက်နဲ့ကျေနပ်လိုက်ပါ
+ဒီလောက်ဆိုရင်ခေါင်းရီးတို့Channel Joinဖို့လုံလောက်နေပီ"
+            },
+            {
+                id: "310608",
+                title: "Sample Video 6",
+                thumbnail: "https://via.placeholder.com/300x200/999999/ffffff?text=Sample+6",
+                vimeoEmbed: `<iframe src="https://player.vimeo.com/video/824804230" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`,
+                cast: "MTZ",
+                category: "Transition",
+                year: "2025",
+                time: "...min",
+                country: "idk",
+                telegramLink: "https://t.me/marcustbyyakuzarsensei",
+                description: "..............."
+            }
+        ];
+
+        // Generate thumbnails
+        const gallery = document.getElementById('gallery');
+        videos.forEach(video => {
+            const thumb = document.createElement('div');
+            thumb.className = 'thumbnail';
+            thumb.innerHTML = `
+                <div class="thumbnail-img" style="background: linear-gradient(45deg, ${getRandomDarkColor()}, ${getRandomDarkColor()})">${video.id}</div>
+                <div class="thumbnail-info">
+                    <div class="thumbnail-title">${video.title}</div>
+                    <div class="thumbnail-time">${video.time}</div>
+                </div>
+            `;
+            thumb.addEventListener('click', () => showVideoDetail(video));
+            gallery.appendChild(thumb);
+        });
+
+        // Video detail functions
+        const videoDetail = document.getElementById('videoDetail');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const backBtn = document.getElementById('backBtn');
+        
+        function showVideoDetail(video) {
+            // Update video details
+            document.getElementById('detailTitle').textContent = video.title;
+            document.getElementById('detailCast').textContent = video.cast;
+            document.getElementById('detailCategory').textContent = video.category;
+            document.getElementById('detailYear').textContent = video.year;
+            document.getElementById('detailTime').textContent = video.time;
+            document.getElementById('detailCountry').textContent = video.country;
+            document.querySelector('.video-description p').textContent = video.description;
+            
+            // Update Telegram link
+            const telegramBtn = document.querySelector('.telegram-btn');
+            telegramBtn.href = video.telegramLink;
+            
+            // Load Vimeo video with your specific embed code
+            videoPlayer.innerHTML = video.vimeoEmbed;
+            
+            // Show detail view with fade in
+            videoDetail.style.display = 'block';
+            setTimeout(() => {
+                videoDetail.classList.add('active');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+            
+            // Initialize Vimeo player
+            new Vimeo.Player(videoPlayer.querySelector('iframe'));
+        }
+        
+        backBtn.addEventListener('click', () => {
+            videoDetail.classList.remove('active');
+            setTimeout(() => {
+                videoDetail.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = 'auto';
+            
+            // Remove the iframe to stop video playback
+            videoPlayer.innerHTML = '';
+        });
+
+        // Helper function for random dark colors
+        function getRandomDarkColor() {
+            const colors = [
+                '#1a1a2e', '#16213e', '#0f3460', '#533483', 
+                '#434343', '#000000', '#1e3d59', '#2c3e50'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Liquid highlight animation
+        const liquid1 = document.getElementById('liquid1');
+        const liquid2 = document.getElementById('liquid2');
+        
+        document.addEventListener('mousemove', (e) => {
+            liquid1.style.left = `${e.clientX - 150}px`;
+            liquid1.style.top = `${e.clientY - 150}px`;
+            
+            // Second highlight follows with delay
+            setTimeout(() => {
+                liquid2.style.left = `${e.clientX - 150}px`;
+                liquid2.style.top = `${e.clientY - 150}px`;
+            }, 100);
+        });
+    </script>
+</body>
+</html>
